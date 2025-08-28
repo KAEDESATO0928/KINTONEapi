@@ -22,7 +22,7 @@
       const customerName = record['文字列__1行_'].value;//お客様姓カナ
       const phoneNumber = record['文字列__1行__0'].value;//電話番号
      // const merchandise= 'WiMAX';//付帯元商材
-     // const uniquenumber = record['文字列__1行__1'].value;//自動採番用の番号
+     // const uniquenumber = record['文字列__1行__1'].value;//自動採番用の番号 a
 
       // 「バリアス」アプリに新規作成するレコードのデータ
       const body = {
