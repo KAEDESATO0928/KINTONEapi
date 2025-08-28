@@ -13,9 +13,9 @@
     const record = event.record;
 
     // 「BARIAS申込プラン」フィールドのコードを 'ドロップダウン' と仮定
-    // フラグが「有」の場合のみ処理を実行
-    if (record['ドロップダウン'].value === '有') {
-     //不要？ const wimaxAppId = kintone.app.getId(); // test用ID:148
+    // 連携ステータスが「未連携」かつフラグが「有」の場合のみ処理を実行
+    if (record['ドロップダウン'].value === '有'&& record['バリアスkintone連携ステータス'].value !== '連携済み') {
+      const wimaxAppId = kintone.app.getId(); // test用ID:148
       const barriassAppId = 147; // 連携先の「バリアステスト用」アプリID:147をここに設定
       
       // WiMAXアプリから取得するフィールドのコードを仮定
@@ -41,15 +41,30 @@
          /* '文字列__1行_': {//自動採番
             'value': uniquenumber
           },*/
-
+          
         }
       };
 
 
        return kintone.api(kintone.api.url('/k/v1/record'), 'POST', body).then(function(resp) {
         console.log('バリアスアプリにレコードが正常に作成されました。');
+         // 連携成功後、WiMAXアプリの「barias_linked」フィールドを「連携済み」に更新
+        const recordId = event.recordId;
+        const updateBody = {
+          'app': wimaxAppId, // WiMAXアプリのID
+          'id': recordId,
+          'record': {
+            'バリアスkintone連携ステータス': {
+              'value': '連携済み'
+            }
+          }
+        };
+
+         return kintone.api(kintone.api.url('/k/v1/record'), 'PUT', updateBody);
+      }).then(function() {
+
         return event;
-      }).catch(function(error) {
+      }).catch(function(error)  {
         console.error('バリアスアプリへのレコード作成に失敗しました。', error);
         alert('連携処理中にエラーが発生しました。');
         return event;
