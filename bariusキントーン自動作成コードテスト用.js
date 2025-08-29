@@ -11,47 +11,55 @@
   // レコード編集画面保存時とレコード追加画面で保存するときにイベントを発生させる
   kintone.events.on(['app.record.edit.submit.success','app.record.create.submit.success'], function(event) {
     const record = event.record;
-
+    const fromAppId = kintone.app.getId(); // test用ID:148
     // 「BARIAS申込プラン」フィールドのコードを 'ドロップダウン' と仮定
     // 連携ステータスが「未連携」かつフラグが「有」の場合のみ処理を実行
     if (record['ドロップダウン'].value === '有'&& record['バリアスkintone連携ステータス'].value !== '連携済み') {
-      const wimaxAppId = kintone.app.getId(); // test用ID:148
-      const barriassAppId = 147; // 連携先の「バリアステスト用」アプリID:147をここに設定
       
-      // WiMAXアプリから取得するフィールドのコードを仮定
-      const customerName = record['文字列__1行_'].value;//お客様姓カナ
-      const phoneNumber = record['文字列__1行__0'].value;//電話番号
-     // const merchandise= 'WiMAX';//付帯元商材
-     // const uniquenumber = record['文字列__1行__1'].value;//自動採番用の番号 a
+      const  configAppId = 149; // ★ここに作成した設定アプリのIDを設定してください
+       const configRecordId = 1; // 常にレコード番号1番のレコードを参照
 
-      // 「バリアス」アプリに新規作成するレコードのデータ
-      const body = {
-        'app': barriassAppId,
-        'record': {
-          /*'付帯元商材': {
-            'value': merchandise
-          },*/
-
-          '文字列__1行__0': {
-            'value': customerName
-          },
-          '文字列__1行__1': {
-            'value': phoneNumber
-          },
-         /* '文字列__1行_': {//自動採番
-            'value': uniquenumber
-          },*/
-          
-        }
+        // 設定アプリからレコード番号1番のレコードを直接取得
+      const getBody = {
+        'app': configAppId,
+        'id': configRecordId
       };
 
 
-       return kintone.api(kintone.api.url('/k/v1/record'), 'POST', body).then(function(resp) {
+      return kintone.api(kintone.api.url('/k/v1/record'), 'GET', getBody).then(function(resp) {
+        const configRecord = resp.record;
+
+        // 連携先アプリIDとフィールドマッピングを取得
+        const barriassAppId = configRecord['連携先アプリID'].value;
+        const fieldMappings = configRecord['連携フィールド設定'].value;
+
+        // 連携フィールド設定から、動的にレコード作成用のボディを生成
+        const newRecordBody = {};
+        fieldMappings.forEach(mapping => {
+          const fromFieldCode = mapping.value['連携元フィールドコード'].value;
+          const toFieldCode = mapping.value['連携先フィールドコード'].value;
+          
+          // 連携元のレコードから値を取得し、連携先のレコードボディに設定
+          if (record[fromFieldCode]) {
+            newRecordBody[toFieldCode] = { 'value': record[fromFieldCode].value };
+          }
+        });
+
+      
+        // 「バリアス」アプリに新規作成するレコードのデータ
+        const postBody = {
+          'app': barriassAppId,
+          'record': newRecordBody
+        };
+         
+        return kintone.api(kintone.api.url('/k/v1/record'), 'POST', postBody);
+      }).then(function(resp) {
         console.log('バリアスアプリにレコードが正常に作成されました。');
-         // 連携成功後、WiMAXアプリの「barias_linked」フィールドを「連携済み」に更新
+        
+        // 連携成功後、WiMAXアプリの「バリアスkintone連携ステータス」フィールドを「連携済み」に更新
         const recordId = event.recordId;
         const updateBody = {
-          'app': wimaxAppId, // WiMAXアプリのID
+          'app': wimaxAppId,
           'id': recordId,
           'record': {
             'バリアスkintone連携ステータス': {
@@ -59,47 +67,18 @@
             }
           }
         };
-
+         
          return kintone.api(kintone.api.url('/k/v1/record'), 'PUT', updateBody);
       }).then(function() {
-
         return event;
-      }).catch(function(error)  {
-        console.error('バリアスアプリへのレコード作成に失敗しました。', error);
+      }).catch(function(error) {
+        console.error('連携処理中にエラーが発生しました。', error);
         alert('連携処理中にエラーが発生しました。');
         return event;
       });
-     /*検証部分なので一旦オフ
-      return kintone.api(kintone.api.url('/k/v1/record'), 'POST', body).then(function(resp) {
-        console.log('バリアスアプリにレコードが正常に作成されました。');
-        return event;
-      }).catch(function(error) {
-        // API実行に失敗した場合の処理
-        const errorMessage = `【kintone連携エラー】\nWiMAXアプリからバリアスアプリへのレコード作成に失敗しました。\n\nエラー詳細:\n${JSON.stringify(error, null, 2)}\n\nお客様氏名: ${customerName}\n電話番号: ${phoneNumber}`;
-
-        const chatworkBody = {
-          'room_id': chatworkRoomId,
-          'body': errorMessage
-        };
-
-         // Chatwork APIを呼び出してメッセージを送信
-        return kintone.api(kintone.api.url('https://api.chatwork.com/v2/rooms/messages', true), 'POST', chatworkBody, {
-          'X-ChatWorkToken': chatworkApiToken
-        }).then(function() {
-          console.error('バリアスアプリへのレコード作成に失敗し、Chatworkへ通知しました。');
-          alert('連携処理中にエラーが発生し、担当者に通知しました。');
-          return event;
-        }).catch(function(chatworkError) {
-          console.error('Chatworkへの通知も失敗しました。', chatworkError);
-          alert('連携処理およびエラー通知に失敗しました。');
-          return event;// エラーがあっても元の処理は続行
-        });
-
-        });
-        */
     }
 
-    // フラグが「有」でない場合は、そのまま元の処理を続行
+       
     return event;
   });
 
