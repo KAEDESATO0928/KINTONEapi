@@ -9,10 +9,9 @@
          const targetGroupCode1 = 'group1'; 
          const targetGroupCode3 = 'group3';
         // 非表示グループの中で”営業コメント（文字列__複数行_）”だけ表示したい
-         const targetGroupCode2 = 'group2'; 
          const displaytargetCode = '文字列__複数行_'; 
          // 特定のログイン名（例: 'mikito'）の場合にフィールドを非表示にする
-         const hiddenLoginName = 'a.inota@apclo.net'; 
+         const hiddenLoginName = 'mikito'; 
          // ユーザーIDが「mikito」の場合に処理を実行
         if (userInfo.loginName === hiddenLoginName) {
             
@@ -26,7 +25,7 @@
             const record = event.record;
             
             // グループ「group2」内のすべてのフィールドを非表示にする
-            const group2Fields = record.targetGroupCode2.value;
+            const group2Fields = record.group2.value;
             group2Fields.forEach(field => {
                 const fieldCode = Object.keys(field)[0];
                 
