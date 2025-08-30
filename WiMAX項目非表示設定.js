@@ -14,33 +14,29 @@
     const fieldToShowCode = '文字列__複数行_';
     
     // ユーザーID
-    const targetUserID = '株式会社樹人';
+    const targetUserName = '株式会社樹人';
 
     kintone.events.on(['app.record.detail.show', 'app.record.edit.show'], function(event) {
         
         const userInfo = kintone.getLoginUser();
 
-        if (userInfo.name === targetUserID) {
+        if (userInfo.name === targetUserName) {
             
             // --- 1. グループ「group1」全体を非表示にする ---
             kintone.app.record.setFieldShown(group1Code, false);
             
-            // --- 2. グループ「group2」内のラベルと他のフィールドを非表示にする ---
-            /* まずはグループ2全体を非表示にする
-            kintone.app.record.setFieldShown(group2Code, false);
-            
-            // 次に、特定のフィールドだけを表示にする
-            kintone.app.record.setFieldShown(fieldToShowCode, true);
-            
-            // --- 3. グループ「group2」内の非表示にしたいラベルを非表示にする ---
-            const allLabels = document.getElementsByClassName('label-field-label');
-            
-            for (let i = 0; i < allLabels.length; i++) {
-                if (labelsToHide.includes(allLabels[i].innerText)) {
-                    allLabels[i].style.display = 'none';
+             const group2Element = kintone.app.record.getFieldElement(group2Code);
+
+           if (group2Element) {
+                // グループ2内のすべてのラベル要素を取得
+                const labelsInGroup2 = group2Element.getElementsByClassName('label-field-label');
+                
+                // 取得したラベルをすべて非表示にする
+                for (let i = 0; i < labelsInGroup2.length; i++) {
+                    labelsInGroup2[i].style.display = 'none';
                 }
             }
-*/
+
             // --- 4. グループ「group3」全体を非表示にする ---
             kintone.app.record.setFieldShown(group3Code, false);
         }
