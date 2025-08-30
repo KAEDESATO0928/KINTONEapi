@@ -25,18 +25,28 @@
             // --- 1. グループ「group1」全体を非表示にする ---
             kintone.app.record.setFieldShown(group1Code, false);
             
-             const group2Element = kintone.app.record.getFieldElement('group2');
+             // --- 2. グループ「group2」内のラベルと、表示したいフィールド以外の項目をすべて非表示にする ---
+            const group2Element = kintone.app.record.getFieldElement(group2Code);
+            
+            if (group2Element) {
+                // グループ内のすべてのフィールド要素を取得
+                const allFieldElementsInGroup2 = group2Element.querySelectorAll('[data-cy-field-code]');
 
-        /*   if (group2Element) {
-                // グループ2内のすべてのラベル要素を取得
+                allFieldElementsInGroup2.forEach(element => {
+                    const fieldCode = element.getAttribute('data-cy-field-code');
+                    // '文字列__複数行_' 以外のフィールドを非表示にする
+                    if (fieldCode !== fieldToShowCode) {
+                        kintone.app.record.setFieldShown(fieldCode, false);
+                    }
+                });
+
+                // グループ内のすべてのラベルを非表示にする
                 const labelsInGroup2 = group2Element.getElementsByClassName('label-field-label');
-                
-                // 取得したラベルをすべて非表示にする
                 for (let i = 0; i < labelsInGroup2.length; i++) {
                     labelsInGroup2[i].style.display = 'none';
                 }
-            }*/
-            kintone.app.record.setFieldShown(group2Code, false);
+            }
+            //kintone.app.record.setFieldShown(group2Code, false);
             // --- 4. グループ「group3」全体を非表示にする ---
             kintone.app.record.setFieldShown(group3Code, false);
         }
