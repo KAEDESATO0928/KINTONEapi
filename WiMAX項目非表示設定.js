@@ -25,7 +25,7 @@
             // --- 1. グループ「group1」全体を非表示にする ---
             kintone.app.record.setFieldShown(group1Code, false);
             
-             const group2Element = kintone.app.record.getFieldElement(group2Code);
+             const group2Element = kintone.app.record.getFieldElement('group2');
 
            if (group2Element) {
                 // グループ2内のすべてのラベル要素を取得
