@@ -14,13 +14,13 @@
     const fieldToShowCode = '文字列__複数行_';
     
     // ユーザーID
-    const targetUserID = 'mikito';
+    const targetUserID = '株式会社樹人';
 
     kintone.events.on(['app.record.detail.show', 'app.record.edit.show'], function(event) {
         
         const userInfo = kintone.getLoginUser();
 
-        if (userInfo.loginName === targetUserID) {
+        if (userInfo.name === targetUserID) {
             
             // --- 1. グループ「group1」全体を非表示にする ---
             kintone.app.record.setFieldShown(group1Code, false);
