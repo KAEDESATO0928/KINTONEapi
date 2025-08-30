@@ -8,7 +8,7 @@
         
         const userInfo = kintone.getLoginUser();
 
-        if (userInfo.loginName === targetUserName) {
+        if (userInfo.name === targetUserName) {
             
             // --- 1. グループ「group1」「group2」「group3」全体を非表示にする ---
             kintone.app.record.setFieldShown('group1', false);
