@@ -12,7 +12,7 @@
          const targetGroupCode2 = 'group2'; 
          const displaytargetCode = '文字列__複数行_'; 
          // 特定のログイン名（例: 'mikito'）の場合にフィールドを非表示にする
-         const hiddenLoginName = 'mikito'; 
+         const hiddenLoginName = 'a.inota@apclo.net'; 
          // ユーザーIDが「mikito」の場合に処理を実行
         if (userInfo.loginName === hiddenLoginName) {
             
