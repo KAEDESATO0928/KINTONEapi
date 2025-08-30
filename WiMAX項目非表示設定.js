@@ -26,7 +26,7 @@
             kintone.app.record.setFieldShown(group1Code, false);
             
             // --- 2. グループ「group2」内のラベルと他のフィールドを非表示にする ---
-            // まずはグループ2全体を非表示にする
+            /* まずはグループ2全体を非表示にする
             kintone.app.record.setFieldShown(group2Code, false);
             
             // 次に、特定のフィールドだけを表示にする
@@ -40,7 +40,7 @@
                     allLabels[i].style.display = 'none';
                 }
             }
-
+*/
             // --- 4. グループ「group3」全体を非表示にする ---
             kintone.app.record.setFieldShown(group3Code, false);
         }
