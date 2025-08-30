@@ -27,7 +27,7 @@
             
              const group2Element = kintone.app.record.getFieldElement('group2');
 
-           if (group2Element) {
+        /*   if (group2Element) {
                 // グループ2内のすべてのラベル要素を取得
                 const labelsInGroup2 = group2Element.getElementsByClassName('label-field-label');
                 
@@ -35,8 +35,8 @@
                 for (let i = 0; i < labelsInGroup2.length; i++) {
                     labelsInGroup2[i].style.display = 'none';
                 }
-            }
-
+            }*/
+            kintone.app.record.setFieldShown(group2Code, false);
             // --- 4. グループ「group3」全体を非表示にする ---
             kintone.app.record.setFieldShown(group3Code, false);
         }
