@@ -11,6 +11,7 @@
   kintone.events.on(['app.record.edit.submit.success','app.record.create.submit.success'], function(event) {
     const record = event.record;
     const fromAppId = kintone.app.getId(); // test用ID:150
+    const recordId = event.recordId;
     // 「BARIAS申込プラン」フィールドのコードを 'ドロップダウン' と仮定
     // 連携ステータスが「未連携」かつ文字列に「有」が含まれている場合のみ処理を実行
     if (record['ドロップダウン'].value.includes('有') && record['バリアスkintone連携ステータス'].value !== '連携済み') {
@@ -56,7 +57,7 @@
        
         
         // 連携成功後、WiMAXアプリの「バリアスkintone連携ステータス」フィールドを「連携済み」に更新
-        const recordId = event.recordId;
+        
         const updateBody = {
           'app': fromAppId,
           'id': recordId,
